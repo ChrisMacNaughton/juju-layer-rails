@@ -4,4 +4,4 @@ sites:
   ceph_dash:
     options: 'Indexes FollowSymLinks MultiViews'
     install_from:
-      source: https://s3.amazonaws.com/caph-files/ceph_dash-1.0.3.tar.gz
+      source: https://s3.amazonaws.com/caph-files/ceph_dash-1.0.4.tar.gz
