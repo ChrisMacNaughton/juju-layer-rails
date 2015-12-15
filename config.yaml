@@ -1,0 +1,29 @@
+options:
+  deploy_key:
+    type: string
+    default: ''
+    description: A deploy key is an SSH key that is stored on the server and grants access to a repository.
+  app-path:
+    type: string
+    default: /var/www/rails-app
+    description: Path on the filesystem to run the app within
+  repo:
+    type: string
+    default:
+    description: The repository to clone from
+  web_workers:
+    type: int
+    default: 2
+    description: How many Puma processes to use
+  worker_threads:
+    type: int
+    default: 5
+    description: How many threads to use per worker
+  web_port:
+    type: int
+    default: 80
+    description: Port to listen on
+  domain:
+    type: string
+    default: ''
+    description: Domain name to use

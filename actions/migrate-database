@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd $(config-get app-path)
+bundle exec rake db:migrate

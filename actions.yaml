@@ -1,0 +1,9 @@
+migrate-database:
+  description: Runs rake db:migrate for the application
+update-app:
+  description: Updates the app to a given sha
+  options:
+    commit:
+      type: string
+      default:
+      description: SHA of the commit to checkout

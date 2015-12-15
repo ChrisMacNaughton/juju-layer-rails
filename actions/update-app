@@ -1,0 +1,11 @@
+#!/bin/bash
+
+commit = action-get commit
+
+if [[ commit == "" ]]; then
+  echo "Cannot update to a commit without a commit"
+  exit 0
+fi
+
+cd $(config-get app-path)
+git checkout $(action-get commit)

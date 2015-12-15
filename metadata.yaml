@@ -1,11 +1,9 @@
-name: ceph-dash
-summary: CephDash is a dashboard for Ceph metrics
-maintainers:
-  - Chris MacNaughton <chris.macnaughton@canonical.com>
-description: |
-  CephDash is a dashboard that goes along with the ceph-metrics-collector
 tags:
-  - monitoring
+  - rails
+  - cms
 requires:
-  database:
-    interface: influxdb-http
+  postgres:
+    interface: pgsql
+provides:
+  website:
+    interface: http

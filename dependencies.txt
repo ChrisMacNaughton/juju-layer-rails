@@ -1,0 +1,4 @@
+git
+libpq-dev
+nodejs
+nginx

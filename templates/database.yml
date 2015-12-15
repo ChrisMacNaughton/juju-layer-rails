@@ -1,0 +1,18 @@
+development:
+  adapter:  {{type}}
+  host:     {{db.host()}}
+  encoding: unicode
+  database: {{db.database()}}
+  pool:     5
+  username: {{db.user()}}
+  password: {{db.password()}}
+
+
+production:
+  adapter:  {{type}}
+  host:     {{db.host()}}
+  encoding: unicode
+  database: {{db.database()}}
+  pool:     5
+  username: {{db.user()}}
+  password: {{db.password()}}
