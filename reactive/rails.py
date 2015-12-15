@@ -1,7 +1,6 @@
 import pwd
 import os
 import sys
-import yaml
 
 from subprocess import check_call
 
