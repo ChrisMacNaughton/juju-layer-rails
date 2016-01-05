@@ -76,6 +76,7 @@ def install():
         service_restart('nginx')
     else:
         service_start('nginx')
+    chown(config('app-path'), 'puma')
     status_set('maintenance', '')
     set_state('app.installed')
 
@@ -84,6 +85,7 @@ def install_site():
     clone()
     if config('commit') is not None:
         update_to_commit()
+    chown(config('app-path'), 'puma')
 
 def git():
     return 'GIT_SSH={} git'.format('{}/files/wrap_ssh.sh'.format(charm_dir()))
@@ -128,10 +130,9 @@ def missing_db():
     status_set('blocked', 'Please add relation to a database (PostgreSQL / MySQL)')
 
 
+@when_not('app.ready')
 @when('app.installed', 'ruby.available')
 def install_deps():
-    if is_state('app.ready'):
-        return
     bundle('install --without development test --deployment')
     status_set('maintenance', '')
     set_state('app.ready')
@@ -168,7 +169,7 @@ def start():
         service_restart('nginx')
     else:
         service_start('nginx')
-
+    chown(config('app-path'), 'puma')
     set_state('app.running')
     remove_state('app.restart')
 
@@ -189,4 +190,5 @@ def setup_postgres_config(psql):
         'db': psql
       }
     )
+    chown(config('app-path'), 'puma')
     set_state('db.configured') 

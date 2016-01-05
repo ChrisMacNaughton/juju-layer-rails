@@ -8,4 +8,8 @@ if [[ commit == "" ]]; then
 fi
 
 cd $(config-get app-path)
+git fetch origin master
 git checkout $(action-get commit)
+bundle install --without development test --deployment
+bundle exec rake assets:precompile
+(kill -s SIGUSR1 $(ps -C ruby -F | grep 'puma [0-9]' | awk {'print $2'})) || restart puma
