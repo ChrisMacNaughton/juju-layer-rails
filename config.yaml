@@ -10,7 +10,7 @@ options:
   repo:
     type: string
     default:
-    description: The repository to clone from
+    description: The repository to clone from, this is required
   web_workers:
     type: int
     default: 2
@@ -27,3 +27,6 @@ options:
     type: string
     default: ''
     description: Domain name to use
+  database_name:
+    type: string
+    description: Database name to request from PostgreSQL

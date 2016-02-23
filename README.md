@@ -8,13 +8,22 @@
 
 ## Configuration
 
+repo: The git repository to clone from **Required**
 deploy_key: A deploy key is an SSH key that is stored on the server and grants access to a repository.
 app-path: Where on the filesystem to run the app
-repo: The git repository to clone from
 web_workers: How many Puma processes to use
 worker_threads: How many threads to use per worker
 web_port: Port to listen on
 domain: Domain name to use
+
+## Relations
+
+### PostgreSQL
+
+This allows the user to attach PostgreSQL for Rails to make use of.
+
+### HTTP
+
 
 
 # license

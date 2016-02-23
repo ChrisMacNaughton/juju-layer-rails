@@ -118,11 +118,6 @@ def chown(path, user):
       for momo in files:
         os.chown(os.path.join(root, momo), uid, -1)
 
-@hook('config-changed')
-def config_changed():
-    if os.path.isfile('/etc/nginx/sites-enabled/default'):
-      os.remove('/etc/nginx/sites-enabled/default')
-
 
 @when('app.ready')
 @when_not('db.configured')
@@ -136,6 +131,7 @@ def install_deps():
     bundle('install --without development test --deployment')
     status_set('maintenance', '')
     set_state('app.ready')
+
 
 @when_not('app.configured')
 @when('app.ready', 'db.configured')
@@ -155,6 +151,8 @@ def migrate_db():
 def start_app():
     bundle('exec rake assets:precompile')
     # start()
+    if os.path.isfile('/etc/nginx/sites-enabled/default'):
+      os.remove('/etc/nginx/sites-enabled/default')
     status_set('active', '')
     set_state('app.restart')
 
@@ -173,11 +171,19 @@ def start():
     set_state('app.running')
     remove_state('app.restart')
 
+
 @when_not('website.configured')
 @when('website.available')
 def configure_website(website):
     website.configure(port=config('web_port'))
     set_state('website.configured')
+
+
+@hook('postgres-relation-joined')
+def request_db(pgsql):
+    if config('database_name'):
+        pgsql.change_database_name(config('database_name'))
+        # pgsql.request_roles('juju_ceph-dash')
 
 @when_not('db.configured')
 @when('postgres.database.available', 'app.ready')
