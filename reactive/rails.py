@@ -33,7 +33,12 @@ def install():
         return
     adduser('puma')
     fetch.apt_install(fetch.filter_installed_packages(['git', 'libpq-dev', 'nodejs']))
-    
+
+    install_site()
+
+
+@when('config.changed.deploy_key')
+def install_site():
     if config('deploy_key') is not None:
         render(
             source='key',
@@ -44,7 +49,10 @@ def install():
             }
         )
 
-    install_site()
+    clone()
+    if config('commit') is not None:
+        update_to_commit()
+    chown(config('app-path'), 'puma')
 
     domain = config('domain')
     if domain is None or domain == '':
@@ -71,7 +79,7 @@ def install():
             'app_path': config('app-path'),
         })
     open_port(config('web_port'))
-    
+
     if service_running('nginx'):
         service_restart('nginx')
     else:
@@ -79,13 +87,6 @@ def install():
     chown(config('app-path'), 'puma')
     status_set('maintenance', '')
     set_state('app.installed')
-
-
-def install_site():
-    clone()
-    if config('commit') is not None:
-        update_to_commit()
-    chown(config('app-path'), 'puma')
 
 def git():
     return 'GIT_SSH={} git'.format('{}/files/wrap_ssh.sh'.format(charm_dir()))
@@ -95,8 +96,14 @@ def clone():
     cmd =  "{} clone {} {}".format(git(), config('repo'), config('app-path'))
     res = check_call(cmd, shell=True)
     if res != 0:
-      status_set('error', 'has a problem with git, try `resolved --retry')
-      sys.exit(1)
+        if config('key_required'):
+            if config('deploy_key') is None:
+                status_set('blocked', 'You must set a deploy_key to continue installation')
+                sys.exit(0)
+            status_set('blocked', 'Your deploy_key may have been rejected')
+            sys.exit(0)
+        status_set('error', 'has a problem with git, try `resolved --retry')
+        sys.exit(1)
     chown(config('app-path'), 'puma')
 
 
@@ -112,8 +119,8 @@ def update_to_commit():
 def chown(path, user):
     uid = pwd.getpwnam(user).pw_uid
     # os.chown(config('app-path'), 'puma', -1)
-    for root, dirs, files in os.walk(path):  
-      for momo in dirs:  
+    for root, dirs, files in os.walk(path):
+      for momo in dirs:
         os.chown(os.path.join(root, momo), uid, -1)
       for momo in files:
         os.chown(os.path.join(root, momo), uid, -1)
@@ -189,7 +196,7 @@ def request_db(pgsql):
 @when('postgres.database.available', 'app.ready')
 def setup_postgres_config(psql):
     render(
-      source='database.yml', 
+      source='database.yml',
       target='{}/config/database.yml'.format(config('app-path')),
       context={
         'type': 'postgresql',
@@ -197,4 +204,4 @@ def setup_postgres_config(psql):
       }
     )
     chown(config('app-path'), 'puma')
-    set_state('db.configured') 
+    set_state('db.configured')

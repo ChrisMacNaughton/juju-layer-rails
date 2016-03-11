@@ -2,7 +2,15 @@ options:
   deploy_key:
     type: string
     default: ''
-    description: A deploy key is an SSH key that is stored on the server and grants access to a repository.
+    description: |
+      A deploy key is an SSH key that is stored on the server and
+      grants access to a repository.
+  key_required:
+    type: boolean
+    default: false
+    description: |
+      This should be set to true to ensure that a deploy key is
+      deployed if necessary
   app-path:
     type: string
     default: /var/www/rails-app
